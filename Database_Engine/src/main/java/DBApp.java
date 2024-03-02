@@ -56,9 +56,11 @@ public class DBApp {
 				else{
 					entry+="False";
 				}
-				entry+="null,null";
-				metaDataWriter.write(entry+"/n");
+				entry+=",null,null";
+				metaDataWriter.write(entry+"\n");
 			}
+			metaDataWriter.close();
+
 
 		}catch (Exception e){
 			
