@@ -45,6 +45,7 @@ public class DBApp {
 			Iterator<String> itr = colNames.iterator();
 
 			//todo:add clustering key as index
+			//todo:check if data type is valid
 			while(itr.hasNext()){
 				String col= itr.next();
 				String entry=strTableName+","+col+","+htblColNameType.get(col)+",";
