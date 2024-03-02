@@ -1,8 +1,10 @@
 
 /** * @author Wael Abouelsaadat */ 
 
+import java.io.FileWriter;
 import java.util.Iterator;
 import java.util.Hashtable;
+import java.util.Set;
 
 
 public class DBApp {
@@ -31,8 +33,37 @@ public class DBApp {
 	public void createTable(String strTableName, 
 							String strClusteringKeyColumn,  
 							Hashtable<String,String> htblColNameType) throws DBAppException{
-								
-		throw new DBAppException("not implemented yet");
+
+		//add table entries to meta data
+		try{
+			FileWriter metaDataWriter= new FileWriter("metadata.csv");
+
+			//srt for key values of hashtable
+			Set<String> colNames= htblColNameType.keySet();
+
+			//iterator for key values
+			Iterator<String> itr = colNames.iterator();
+
+			//todo:add clustering key as index
+			while(itr.hasNext()){
+				String col= itr.next();
+				String entry=strTableName+","+col+","+htblColNameType.get(col)+",";
+
+				//checks if column is the clustering column
+				if(col.equals(strClusteringKeyColumn)){
+					entry+="True";
+				}
+				else{
+					entry+="False";
+				}
+				entry+="null,null";
+				metaDataWriter.write(entry+"/n");
+			}
+
+		}catch (Exception e){
+			
+		}
+//		throw new DBAppException("not implemented yet");
 	}
 
 
@@ -95,8 +126,8 @@ public class DBApp {
 			htblColNameType.put("name", "java.lang.String");
 			htblColNameType.put("gpa", "java.lang.double");
 			dbApp.createTable( strTableName, "id", htblColNameType );
-			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
-
+//			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
+/*
 			Hashtable htblColNameValue = new Hashtable( );
 			htblColNameValue.put("id", new Integer( 2343432 ));
 			htblColNameValue.put("name", new String("Ahmed Noor" ) );
@@ -144,6 +175,8 @@ public class DBApp {
 			strarrOperators[0] = "OR";
 			// select * from Student where name = "John Noor" or gpa = 1.5;
 			Iterator resultSet = dbApp.selectFromTable(arrSQLTerms , strarrOperators);
+
+ */
 		}
 		catch(Exception exp){
 			exp.printStackTrace( );
