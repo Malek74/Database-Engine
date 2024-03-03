@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Page {
+public class Page implements Serializable {
     private Vector<Tuple> tupleVector;
 
     public Page(){

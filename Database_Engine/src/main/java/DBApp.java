@@ -1,7 +1,9 @@
 
 /** * @author Wael Abouelsaadat */ 
 
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Hashtable;
 import java.util.Set;
@@ -34,6 +36,8 @@ public class DBApp {
 							String strClusteringKeyColumn,  
 							Hashtable<String,String> htblColNameType) throws DBAppException{
 
+		 final String[]  allowedDataTypes= {"java.lang.Integer","java.lang.String","java.lang.double"};
+
 		//add table entries to meta data
 		try{
 			FileWriter metaDataWriter= new FileWriter("metadata.csv");
@@ -44,11 +48,18 @@ public class DBApp {
 			//iterator for key values
 			Iterator<String> itr = colNames.iterator();
 
-			//todo:add clustering key as index
-			//todo:check if data type is valid
 			while(itr.hasNext()){
 				String col= itr.next();
-				String entry=strTableName+","+col+","+htblColNameType.get(col)+",";
+				String dataType= htblColNameType.get(col);
+				String entry="";
+
+				//check if data type is allowed data type
+				if(dataType.equals(allowedDataTypes[0]) || dataType.equals(allowedDataTypes[1]) || dataType.equals(allowedDataTypes[2])){
+					 entry=strTableName+","+col+","+dataType+",";
+				}
+				else{
+					throw new DBAppException("Invalid Data Type!");
+				}
 
 				//checks if column is the clustering column
 				if(col.equals(strClusteringKeyColumn)){
@@ -57,24 +68,27 @@ public class DBApp {
 				else{
 					entry+="False";
 				}
+
 				entry+=",null,null";
+
+				//write entry in csv file
 				metaDataWriter.write(entry+"\n");
 			}
 			metaDataWriter.close();
 
 
-		}catch (Exception e){
+		}catch (IOException e){
 			
 		}
 //		throw new DBAppException("not implemented yet");
 	}
 
-
 	// following method creates a B+tree index 
 	public void createIndex(String   strTableName,
 							String   strColName,
 							String   strIndexName) throws DBAppException{
-		
+
+
 		throw new DBAppException("not implemented yet");
 	}
 
@@ -122,6 +136,8 @@ public class DBApp {
 	
 	try{
 			String strTableName = "Student";
+
+
 			DBApp	dbApp = new DBApp( );
 			
 			Hashtable htblColNameType = new Hashtable( );
@@ -181,8 +197,10 @@ public class DBApp {
 
  */
 		}
+
 		catch(Exception exp){
 			exp.printStackTrace( );
+			System.out.println("Yanhaaari");
 		}
 	}
 
