@@ -23,9 +23,12 @@ public class BplusTree {
         Comparator<DictionaryPair> c = new Comparator<DictionaryPair>() {
             @Override
             public int compare(DictionaryPair o1, DictionaryPair o2) {
-                Integer a = Integer.valueOf(o1.key);
-                Integer b = Integer.valueOf(o2.key);
-                return a.compareTo(b);
+                    Comparable a =o1.key;
+                    Comparable b =o2.key;
+
+                    return a.compareTo(b);
+
+
             }
         };
         return Arrays.binarySearch(dps, 0, numPairs, new DictionaryPair(t, 0), c);
@@ -40,15 +43,15 @@ public class BplusTree {
      *             object
      * @return the LeafNode object that contains the key within its dictionary
      */
-    private LeafNode findLeafNode(int key) {
+    private LeafNode findLeafNode(Comparable key) {
 
         // Initialize keys and index variable
-        Integer[] keys = this.root.keys;
+        Comparable[] keys=this.root.keys;
         int i;
-
         // Find next node on path to appropriate leaf node
-        for (i = 0; i < this.root.degree - 1; i++) {
-            if (key < keys[i]) {
+        for ( i= 0; i < this.root.degree - 1; i++) {
+
+            if (key.compareTo(keys[i])<0) {
                 break;
             }
         }
@@ -65,15 +68,15 @@ public class BplusTree {
         }
     }
 
-    private LeafNode findLeafNode(InternalNode node, int key) {
+    private LeafNode findLeafNode(InternalNode node, Comparable key) {
 
         // Initialize keys and index variable
-        Integer[] keys = node.keys;
+        Comparable[] keys = node.keys;
         int i;
 
         // Find next node on path to appropriate leaf node
         for (i = 0; i < node.degree - 1; i++) {
-            if (key < keys[i]) {
+            if (key.compareTo(keys[i])<0) {
                 break;
             }
         }
@@ -126,7 +129,7 @@ public class BplusTree {
      * @param in: a deficient InternalNode
      */
     private void handleDeficiency(InternalNode in) {
-
+//todo:Stopped Here
         InternalNode sibling;
         InternalNode parent = in.parent;
 
@@ -151,7 +154,7 @@ public class BplusTree {
             sibling = in.rightSibling;
 
             // Copy 1 key and pointer from sibling (atm just 1 key)
-            int borrowedKey = sibling.keys[0];
+            Comparable borrowedKey = sibling.keys[0];
             Node pointer = sibling.childPointers[0];
 
             // Copy root key and pointer into parent
@@ -356,8 +359,8 @@ public class BplusTree {
 
         // Split keys and pointers in half
         int midpoint = getMidpoint();
-        int newParentKey = in.keys[midpoint];
-        Integer[] halfKeys = splitKeys(in.keys, midpoint);
+        Comparable newParentKey = in.keys[midpoint];
+        Comparable[] halfKeys = splitKeys(in.keys, midpoint);
         Node[] halfPointers = splitChildPointers(in, midpoint);
 
         // Change degree of original InternalNode in
@@ -382,7 +385,7 @@ public class BplusTree {
         if (parent == null) {
 
             // Create new root node and add midpoint key and pointers
-            Integer[] keys = new Integer[this.m];
+            Comparable[] keys = new Integer[this.m];
             keys[0] = newParentKey;
             InternalNode newRoot = new InternalNode(this.m, keys);
             newRoot.appendChildPointer(in);
@@ -415,9 +418,9 @@ public class BplusTree {
      * @param split: the index where the split is to occur
      * @return Integer[] of removed keys
      */
-    private Integer[] splitKeys(Integer[] keys, int split) {
+    private Comparable[] splitKeys(Comparable[] keys, int split) {
 
-        Integer[] halfKeys = new Integer[this.m];
+        Comparable[] halfKeys = new Comparable[this.m];
 
         // Remove split-indexed value from keys
         keys[split] = null;
@@ -620,7 +623,7 @@ public class BplusTree {
                     /* Flow of execution goes here when there is 1 node in tree */
 
                     // Create internal node to serve as parent, use dictionary midpoint key
-                    Integer[] parent_keys = new Integer[this.m];
+                    Comparable[] parent_keys = new Integer[this.m];
                     parent_keys[0] = halfDict[0].key;
                     InternalNode parent = new InternalNode(this.m, parent_keys);
                     ln.parent = parent;
@@ -631,7 +634,7 @@ public class BplusTree {
                     /* Flow of execution goes here when parent exists */
 
                     // Add new key to parent for proper indexing
-                    int newParentKey = halfDict[0].key;
+                    Comparable newParentKey = halfDict[0].key;
                     ln.parent.keys[ln.parent.degree - 1] = newParentKey;
                     Arrays.sort(ln.parent.keys, 0, ln.parent.degree);
                 }
@@ -782,7 +785,7 @@ public class BplusTree {
         int degree;
         InternalNode leftSibling;
         InternalNode rightSibling;
-        Object[] keys;
+        Comparable[] keys;
         Node[] childPointers;
 
         /**
@@ -940,7 +943,7 @@ public class BplusTree {
          * @param m:    the max degree of the InternalNode
          * @param keys: the list of keys that InternalNode is initialized with
          */
-        private InternalNode(int m, Object[] keys) {
+        private InternalNode(int m, Comparable[] keys) {
             this.maxDegree = m;
             this.minDegree = (int) Math.ceil(m / 2.0);
             this.degree = 0;
@@ -955,7 +958,7 @@ public class BplusTree {
          * @param keys:     the list of keys that InternalNode is initialized with
          * @param pointers: the list of pointers that InternalNode is initialized with
          */
-        private InternalNode(int m, Object[] keys, Node[] pointers) {
+        private InternalNode(int m, Comparable[] keys, Node[] pointers) {
             this.maxDegree = m;
             this.minDegree = (int) Math.ceil(m / 2.0);
             this.degree = linearNullSearch(pointers);
@@ -1104,7 +1107,7 @@ public class BplusTree {
      * so that the DictionaryPair objects can be sorted later on.
      */
     public class DictionaryPair implements Comparable<DictionaryPair> {
-        Object key;
+        Comparable key;
         double value; // Ma hazaaa?
 
         /**
