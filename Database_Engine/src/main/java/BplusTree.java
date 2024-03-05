@@ -491,7 +491,7 @@ public class BplusTree {
 
                         // Update key in parent if necessary
                         int pointerIndex = findIndexOfPointer(parent.childPointers, ln);
-                        if (!(borrowedDP.key >= parent.keys[pointerIndex - 1])) {
+                        if ((borrowedDP.key.compareTo(parent.keys[pointerIndex - 1]))<0) {
                             parent.keys[pointerIndex - 1] = ln.dictionary[0].key;
                         }
 
@@ -512,7 +512,7 @@ public class BplusTree {
 
                         // Update key in parent if necessary
                         int pointerIndex = findIndexOfPointer(parent.childPointers, ln);
-                        if (!(borrowedDP.key < parent.keys[pointerIndex])) {
+                        if (!(borrowedDP.key .compareTo(parent.keys[pointerIndex])<0) ) {
                             parent.keys[pointerIndex] = sibling.dictionary[0].key;
                         }
 
@@ -740,7 +740,7 @@ public class BplusTree {
                 }
 
                 // Include value if its key fits within the provided range
-                if (lowerBound <= dp.key && dp.key <= upperBound) {
+                if (dp.key.compareTo(lowerBound)>=0 && dp.key.compareTo(upperBound)<=0 ) {
                     values.add(dp.value);
                 }
             }
