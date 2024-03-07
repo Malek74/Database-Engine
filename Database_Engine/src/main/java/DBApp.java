@@ -1,12 +1,11 @@
 
 /** * @author Wael Abouelsaadat */ 
 
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Hashtable;
-import java.util.Set;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.*;
 
 
 public class DBApp {
@@ -86,10 +85,33 @@ public class DBApp {
 	// following method creates a B+tree index 
 	public void createIndex(String   strTableName,
 							String   strColName,
-							String   strIndexName) throws DBAppException{
+							String   strIndexName) throws DBAppException, IOException {
 
 
-		throw new DBAppException("not implemented yet");
+		//checks if table exists in metadata file
+		if(!Helpers.tableExists(strTableName)){
+			throw  new DBAppException("Table not found in MetaData!");
+		}
+		Path metaDataPath = Path.of("metadata.csv");
+		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
+
+		for(int i=0;i<fileContent.size();i++){
+			if(fileContent.get(i).contains(strTableName) && (fileContent.get(i).contains(strColName))) {
+				String[] newLine = fileContent.get(i).split(",");
+				newLine[4] = strIndexName;
+				newLine[5] = "B+tree";
+				fileContent.set(i, String.join(",", newLine));
+				break;
+			}
+		}
+		Files.write(metaDataPath,fileContent,StandardCharsets.UTF_8);
+
+
+
+
+
+
+//		throw new DBAppException("not implemented yet");
 	}
 
 
@@ -122,6 +144,8 @@ public class DBApp {
 								Hashtable<String,Object> htblColNameValue) throws DBAppException{
 	
 		throw new DBAppException("not implemented yet");
+
+
 	}
 
 
@@ -145,7 +169,9 @@ public class DBApp {
 			htblColNameType.put("name", "java.lang.String");
 			htblColNameType.put("gpa", "java.lang.double");
 			dbApp.createTable( strTableName, "id", htblColNameType );
-//			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
+		System.out.println("hello");
+
+			dbApp.createIndex( strTableName, "gpa", "gpaIndex" );
 /*
 			Hashtable htblColNameValue = new Hashtable( );
 			htblColNameValue.put("id", new Integer( 2343432 ));

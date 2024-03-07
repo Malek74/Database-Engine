@@ -130,7 +130,7 @@ public class BplusTree {
      * @param in: a deficient InternalNode
      */
     private void handleDeficiency(InternalNode in) {
-//todo:Stopped Here
+
         InternalNode sibling;
         InternalNode parent = in.parent;
 
@@ -954,7 +954,7 @@ public class BplusTree {
          */
         private InternalNode(int m, Comparable[] keys) {
             this.maxDegree = m;
-            this.minDegree = (int) Math.ceil(m / 2.0);
+            this.minDegree = (int) Math.ceil(m / 2.0)-1;
             this.degree = 0;
             this.keys = keys;
             this.childPointers = new Node[this.maxDegree + 1];
@@ -969,7 +969,7 @@ public class BplusTree {
          */
         private InternalNode(int m, Comparable[] keys, Node[] pointers) {
             this.maxDegree = m;
-            this.minDegree = (int) Math.ceil(m / 2.0);
+            this.minDegree = (int) Math.ceil(m / 2.0)-1;
             this.degree = linearNullSearch(pointers);
             this.keys = keys;
             this.childPointers = pointers;
