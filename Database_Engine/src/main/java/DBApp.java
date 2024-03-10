@@ -87,6 +87,7 @@ public class DBApp {
 		if (!Helpers.tableExists(strTableName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
+
 		Path metaDataPath = Path.of("metadata.csv");
 		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
 

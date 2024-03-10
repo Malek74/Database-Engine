@@ -29,9 +29,10 @@ public class Tuple {
 
     public static void main(String[] args) {
         Hashtable<String, Object> h = new Hashtable<>();
-        h.put("name", "Ahmed");
         h.put("age", 20);
         h.put("address", "Rehab");
+        h.put("name", "Ahmed");
+
 
         Tuple t = new Tuple(h);
         System.out.println(t);

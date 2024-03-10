@@ -19,10 +19,11 @@ public class Page implements Serializable {
 
     @Override
     public String toString() {
-        String out = "";
-        for (Tuple tuple : tupleVector) {
-
+        String out = "[";
+        for (int i=0;i<tupleVector.size()-1;i++) {
+            out+=tupleVector.get(i)+",";
         }
+        out+=tupleVector.get(tupleVector.size()-1)+"]";
         return out;
     }
 }
