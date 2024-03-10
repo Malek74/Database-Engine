@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
-public class Tuple {
+public class Tuple implements Serializable {
     Hashtable<String, Object> tableTupleHash;
 
     // <name,new String("gassser")>

@@ -1,21 +1,28 @@
-import java.io.Serializable;
+import java.io.*;
+import java.util.Hashtable;
 import java.util.Vector;
 
-public class Page implements Serializable {
+public class Page  {
     private Vector<Tuple> tupleVector;
+    private String path;
 
-    public Page() {
+    public Page(int n,String name) {
         tupleVector = new Vector<>();
+        path=name+"_"+n+".ser";
+        Helpers.serializeTuple(tupleVector,path);
     }
 
-    public Page(Tuple t) {
-        tupleVector = new Vector<>();
-        tupleVector.add(t);
-    }
+
 
     public int getRecordsNumber() {
-        return tupleVector.size();
+        return 0;
     }
+
+    public String getPath(){
+        return this.path;
+    }
+
+
 
     @Override
     public String toString() {
@@ -25,5 +32,18 @@ public class Page implements Serializable {
         }
         out+=tupleVector.get(tupleVector.size()-1)+"]";
         return out;
+    }
+
+    public static void main(String[] args) {
+        Page t = new Page(1,"malek");
+
+        Hashtable<String, Object> h = new Hashtable<>();
+        h.put("age", 20);
+        h.put("address", "Rehab");
+        h.put("name", "Ahmed");
+
+
+
+
     }
 }

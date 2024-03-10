@@ -10,7 +10,6 @@ import java.util.*;
 public class DBApp {
 
 	Hashtable<String, Table> tablesCreated = new Hashtable<>();
-	Hashtable<String, BplusTree> treesCreated = new Hashtable<>();
 
 	public DBApp() {
 
@@ -75,7 +74,7 @@ public class DBApp {
 		} catch (IOException e) {
 
 		}
-		tablesCreated.put(strTableName, new Table());
+		tablesCreated.put(strTableName, new Table(strTableName));
 		// throw new DBAppException("not implemented yet");
 	}
 
@@ -110,10 +109,25 @@ public class DBApp {
 	// htblColNameValue must include a value for the primary key
 	public void insertIntoTable(String strTableName,
 			Hashtable<String, Object> htblColNameValue) throws DBAppException, IOException {
+
+		Hashtable<String,String> createdIndexes= Helpers.getIndexes(strTableName);
+		Table tableToInsert = tablesCreated.get(strTableName);
+		Comparable key;
+
+
+		//check that table exists
 		if (!Helpers.tableExists(strTableName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
+		//insert value in page
+//		for(Page page : tableToInsert.)
 
+		//todo:check what to insert
+		//update B+trees if available
+		for(String index:createdIndexes.keySet()){
+			key=(Comparable) htblColNameValue.get(index);
+//			tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,);
+		}
 		throw new DBAppException("not implemented yet");
 	}
 
