@@ -10,6 +10,7 @@ import java.util.*;
 public class DBApp {
 
 	Hashtable<String, Table> tablesCreated = new Hashtable<>();
+	Hashtable<String, BplusTree> treesCreated = new Hashtable<>();
 
 	public DBApp() {
 
@@ -84,7 +85,7 @@ public class DBApp {
 			String strIndexName) throws DBAppException, IOException {
 
 		// checks if table exists in metadata file
-		if (!Helpers.tableExists(strTableName)) {
+		if (!Helpers.tableExists(strTableName, strColName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
 
@@ -108,7 +109,10 @@ public class DBApp {
 	// following method inserts one row only.
 	// htblColNameValue must include a value for the primary key
 	public void insertIntoTable(String strTableName,
-			Hashtable<String, Object> htblColNameValue) throws DBAppException {
+			Hashtable<String, Object> htblColNameValue) throws DBAppException, IOException {
+		if (!Helpers.tableExists(strTableName)) {
+			throw new DBAppException("Table not found in MetaData!");
+		}
 
 		throw new DBAppException("not implemented yet");
 	}
