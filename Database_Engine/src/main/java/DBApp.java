@@ -107,26 +107,30 @@ public class DBApp {
 
 	// following method inserts one row only.
 	// htblColNameValue must include a value for the primary key
-	public void insertIntoTable(String strTableName,
-			Hashtable<String, Object> htblColNameValue) throws DBAppException, IOException {
+	public void insertIntoTable(String strTableName, Hashtable<String, Object> htblColNameValue)
+			throws DBAppException, IOException {
 
-		Hashtable<String,String> createdIndexes= Helpers.getIndexes(strTableName);
-		Table tableToInsert = tablesCreated.get(strTableName);
-		Comparable key;
-
-
-		//check that table exists
+		// check that table exists
 		if (!Helpers.tableExists(strTableName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
-		//insert value in page
-//		for(Page page : tableToInsert.)
+		// insert value in page
+		// TODO: Check types and validity?
+		Table tableToInsert = tablesCreated.get(strTableName);
+		String clusteringKey = Helpers.getClusteringKey(strTableName);
+		Tuple t = new Tuple(htblColNameValue, clusteringKey);
+		Page p = tableToInsert.getInsertionPage((Comparable) htblColNameValue.get(clusteringKey), clusteringKey);
+		tableToInsert.insert(p, t);
 
-		//todo:check what to insert
-		//update B+trees if available
-		for(String index:createdIndexes.keySet()){
-			key=(Comparable) htblColNameValue.get(index);
-//			tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,);
+		Hashtable<String, String> createdIndexes = Helpers.getIndexes(strTableName);
+
+		Comparable key;
+
+		// todo:check what to insert
+		// update B+trees if available
+		for (String index : createdIndexes.keySet()) {
+			key = (Comparable) htblColNameValue.get(index);
+			// tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,);
 		}
 		throw new DBAppException("not implemented yet");
 	}
