@@ -9,7 +9,7 @@ import java.util.*;
 
 public class DBApp {
 
-	Hashtable<String, Table> tablesCreated = new Hashtable<>();
+	static Hashtable<String, Table> tablesCreated = new Hashtable<>();
 
 	public DBApp() {
 
@@ -36,7 +36,7 @@ public class DBApp {
 
 		// add table entries to meta data
 		try {
-			FileWriter metaDataWriter = new FileWriter("metadata.csv");
+			FileWriter metaDataWriter = new FileWriter("metadata.csv",true);
 
 			// srt for key values of hashtable
 			Set<String> colNames = htblColNameType.keySet();
@@ -132,7 +132,7 @@ public class DBApp {
 			key = (Comparable) htblColNameValue.get(index);
 			// tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,);
 		}
-		throw new DBAppException("not implemented yet");
+//		throw new DBAppException("not implemented yet");
 	}
 
 	// following method updates one row only
@@ -175,41 +175,78 @@ public class DBApp {
 			htblColNameType.put("name", "java.lang.String");
 			htblColNameType.put("gpa", "java.lang.double");
 			dbApp.createTable(strTableName, "id", htblColNameType);
-			System.out.println("hello");
+			htblColNameType.clear();
+			
+			htblColNameType.put("make","java.lang.String");
+			htblColNameType.put("model","java.lang.String");
+			htblColNameType.put("year","java.lang.Integer");
+			dbApp.createTable("Cars", "make", htblColNameType);
+
 
 			dbApp.createIndex(strTableName, "gpa", "gpaIndex");
-			/*
-			 * Hashtable htblColNameValue = new Hashtable( );
+			dbApp.createIndex("Cars", "year", "yearIndex");
+
+
+			Hashtable htblColNameValue = new Hashtable( );
+
+			//for loop inserts 200 element
+			for (int i = 0; i < 400; i++) {
+				htblColNameValue.put("id", i + 2);
+				htblColNameValue.put("name", "Name_" + (i + 2));
+				htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
+				dbApp.insertIntoTable(strTableName, htblColNameValue);
+			}
+
+			htblColNameValue.put("id",1);
+			htblColNameValue.put("name", "Name_" + 1);
+			htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
+			dbApp.insertIntoTable(strTableName, htblColNameValue);
+
+			System.out.println(tablesCreated.keys());
+			System.out.println(tablesCreated.get("Student").getNumberOfPages());
+			System.out.println(Helpers.deserializeTuple("Student_1.ser").size());
+			System.out.println(Helpers.deserializeTuple("Student_2.ser").size());
+			System.out.println(Helpers.deserializeTuple("Student_3.ser").size());
+
+//			for(Tuple t:Helpers.deserializeTuple("Student_1.ser")){
+//				System.out.println(t);
+//			}
+//			System.out.println("------------------------");
+//
+//			for(Tuple t:Helpers.deserializeTuple("Student_2.ser")){
+//				System.out.println(t);
+//			}
+			/* Hashtable htblColNameValue = new Hashtable( );
 			 * htblColNameValue.put("id", new Integer( 2343432 ));
 			 * htblColNameValue.put("name", new String("Ahmed Noor" ) );
 			 * htblColNameValue.put("gpa", new Double( 0.95 ) );
 			 * dbApp.insertIntoTable( strTableName , htblColNameValue );
-			 * 
+			 *
 			 * htblColNameValue.clear( );
 			 * htblColNameValue.put("id", new Integer( 453455 ));
 			 * htblColNameValue.put("name", new String("Ahmed Noor" ) );
 			 * htblColNameValue.put("gpa", new Double( 0.95 ) );
 			 * dbApp.insertIntoTable( strTableName , htblColNameValue );
-			 * 
+			 *
 			 * htblColNameValue.clear( );
 			 * htblColNameValue.put("id", new Integer( 5674567 ));
 			 * htblColNameValue.put("name", new String("Dalia Noor" ) );
 			 * htblColNameValue.put("gpa", new Double( 1.25 ) );
 			 * dbApp.insertIntoTable( strTableName , htblColNameValue );
-			 * 
+			 *
 			 * htblColNameValue.clear( );
 			 * htblColNameValue.put("id", new Integer( 23498 ));
 			 * htblColNameValue.put("name", new String("John Noor" ) );
 			 * htblColNameValue.put("gpa", new Double( 1.5 ) );
 			 * dbApp.insertIntoTable( strTableName , htblColNameValue );
-			 * 
+			 *
 			 * htblColNameValue.clear( );
 			 * htblColNameValue.put("id", new Integer( 78452 ));
 			 * htblColNameValue.put("name", new String("Zaky Noor" ) );
 			 * htblColNameValue.put("gpa", new Double( 0.88 ) );
 			 * dbApp.insertIntoTable( strTableName , htblColNameValue );
-			 * 
-			 * 
+			 *
+			/ *
 			 * SQLTerm[] arrSQLTerms;
 			 * arrSQLTerms = new SQLTerm[2];
 			 * arrSQLTerms[0]._strTableName = "Student";

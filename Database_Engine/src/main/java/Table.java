@@ -64,10 +64,11 @@ public class Table {
 
         if (tupleVector.size() > 200) {
             if (pages.size() > i + 1) {
-                insert(pages.get(i + 1), tupleVector.removeLast());
+                insert(pages.get(i + 1),tupleVector.remove(tupleVector.size()-1));
             } else {
                 Page newPage = new Page(pages.size() + 1, tableName);
-                insert(newPage, tupleVector.removeLast());
+                this.addPage(newPage);
+                insert(newPage, tupleVector.remove(tupleVector.size()-1));
             }
         }
         Helpers.serializeTuple(tupleVector, p.getPath());

@@ -1149,87 +1149,89 @@ public class BplusTree {
 
         }
 
-    }
-
-    public static void main(String[] args) {
-        BplusTree bplusTree = new BplusTree(2);
-
-        Hashtable tableTupleHash1 = new Hashtable();
-        tableTupleHash1.put("name", new String("Malek"));
-        tableTupleHash1.put("age", 1);
-        tableTupleHash1.put("gpa", 2.2);
-
-        Tuple t1 = new Tuple(tableTupleHash1);
-
-        Hashtable tableTupleHash2 = new Hashtable();
-        tableTupleHash2.put("name", new String("Gasser"));
-        tableTupleHash2.put("age", 2);
-        tableTupleHash2.put("gpa", 0.7);
-
-        Tuple t2 = new Tuple(tableTupleHash2);
-
-        Hashtable tableTupleHash3 = new Hashtable();
-        tableTupleHash3.put("name", new String("Ramito"));
-        tableTupleHash3.put("age", 3);
-        tableTupleHash3.put("gpa", 0.8);
-
-        Tuple t3 = new Tuple(tableTupleHash3);
-
-        Hashtable tableTupleHash4 = new Hashtable();
-        tableTupleHash4.put("name", new String("Hoor"));
-        tableTupleHash4.put("age", 4);
-        tableTupleHash4.put("gpa", 0.9);
-
-        Tuple t4 = new Tuple(tableTupleHash4);
-
-        Hashtable tableTupleHash5 = new Hashtable();
-        tableTupleHash5.put("name", new String("John"));
-        tableTupleHash5.put("age", 20);
-        tableTupleHash5.put("gpa", 3.5);
-        Tuple t5 = new Tuple(tableTupleHash5);
-
-        Hashtable tableTupleHash6 = new Hashtable();
-        tableTupleHash6.put("name", new String("Alice"));
-        tableTupleHash6.put("age", 22);
-        tableTupleHash6.put("gpa", 3.9);
-        Tuple t6 = new Tuple(tableTupleHash6);
-
-        Hashtable tableTupleHash7 = new Hashtable();
-        tableTupleHash7.put("name", new String("Bob"));
-        tableTupleHash7.put("age", 19);
-        tableTupleHash7.put("gpa", 3.2);
-        Tuple t7 = new Tuple(tableTupleHash7);
-
-
-        bplusTree.insert(1,t1);
-        bplusTree.insert(2,t2);
-        bplusTree.insert(3,t3);
-        bplusTree.insert(4,t4);
-        System.out.println(bplusTree.root.keys[0]);
-        System.out.println(bplusTree.root.keys[1]);
-        System.out.println("-------------");
-        for(Node n : bplusTree.root.childPointers){
-            if(n instanceof InternalNode) {
-
-                InternalNode t = (InternalNode) n;
-                t.printKeys();
-                System.out.println("++++++++++++");
-
-                for(Node m : t.childPointers) {
-                    LeafNode s = (LeafNode) m;
-                    if (s instanceof LeafNode) {
-                        for (DictionaryPair entry : s.dictionary)
-                            System.out.println(entry);
-                    }
-                }
-
-                System.out.println("_______");
-            }
-        }
-//                (    ,3)
-//                (2) (3,4 )
-
 
 
     }
+
+//    public static void main(String[] args) {
+//        BplusTree bplusTree = new BplusTree(2);
+//
+//        Hashtable tableTupleHash1 = new Hashtable();
+//        tableTupleHash1.put("name", new String("Malek"));
+//        tableTupleHash1.put("age", 1);
+//        tableTupleHash1.put("gpa", 2.2);
+//
+//        Tuple t1 = new Tuple(tableTupleHash1);
+//
+//        Hashtable tableTupleHash2 = new Hashtable();
+//        tableTupleHash2.put("name", new String("Gasser"));
+//        tableTupleHash2.put("age", 2);
+//        tableTupleHash2.put("gpa", 0.7);
+//
+//        Tuple t2 = new Tuple(tableTupleHash2);
+//
+//        Hashtable tableTupleHash3 = new Hashtable();
+//        tableTupleHash3.put("name", new String("Ramito"));
+//        tableTupleHash3.put("age", 3);
+//        tableTupleHash3.put("gpa", 0.8);
+//
+//        Tuple t3 = new Tuple(tableTupleHash3);
+//
+//        Hashtable tableTupleHash4 = new Hashtable();
+//        tableTupleHash4.put("name", new String("Hoor"));
+//        tableTupleHash4.put("age", 4);
+//        tableTupleHash4.put("gpa", 0.9);
+//
+//        Tuple t4 = new Tuple(tableTupleHash4);
+//
+//        Hashtable tableTupleHash5 = new Hashtable();
+//        tableTupleHash5.put("name", new String("John"));
+//        tableTupleHash5.put("age", 20);
+//        tableTupleHash5.put("gpa", 3.5);
+//        Tuple t5 = new Tuple(tableTupleHash5);
+//
+//        Hashtable tableTupleHash6 = new Hashtable();
+//        tableTupleHash6.put("name", new String("Alice"));
+//        tableTupleHash6.put("age", 22);
+//        tableTupleHash6.put("gpa", 3.9);
+//        Tuple t6 = new Tuple(tableTupleHash6);
+//
+//        Hashtable tableTupleHash7 = new Hashtable();
+//        tableTupleHash7.put("name", new String("Bob"));
+//        tableTupleHash7.put("age", 19);
+//        tableTupleHash7.put("gpa", 3.2);
+//        Tuple t7 = new Tuple(tableTupleHash7);
+//
+//
+//        bplusTree.insert(1,t1);
+//        bplusTree.insert(2,t2);
+//        bplusTree.insert(3,t3);
+//        bplusTree.insert(4,t4);
+//        System.out.println(bplusTree.root.keys[0]);
+//        System.out.println(bplusTree.root.keys[1]);
+//        System.out.println("-------------");
+//        for(Node n : bplusTree.root.childPointers){
+//            if(n instanceof InternalNode) {
+//
+//                InternalNode t = (InternalNode) n;
+//                t.printKeys();
+//                System.out.println("++++++++++++");
+//
+//                for(Node m : t.childPointers) {
+//                    LeafNode s = (LeafNode) m;
+//                    if (s instanceof LeafNode) {
+//                        for (DictionaryPair entry : s.dictionary)
+//                            System.out.println(entry);
+//                    }
+//                }
+//
+//                System.out.println("_______");
+//            }
+//        }
+////                (    ,3)
+////                (2) (3,4 )
+//
+//
+//
+//    }
 }

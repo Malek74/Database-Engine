@@ -21,9 +21,10 @@ public class Helpers {
     public static boolean tableExists(String tableName, String colName) throws IOException {
         FileReader fileReader = new FileReader("metadata.csv");
         BufferedReader reader = new BufferedReader(fileReader);
-
+        String line;
         while (reader.ready()) {
-            if (reader.readLine().contains(tableName) & reader.readLine().contains(colName)) {
+            line=reader.readLine();
+            if (line.contains(tableName) && line.contains(colName)) {
                 reader.close();
                 return true;
             }
@@ -77,7 +78,7 @@ public class Helpers {
 
     public static Vector<Tuple> deserializeTuple(String path) {
         try {
-            FileInputStream fileIn = new FileInputStream("malek_1.ser");
+            FileInputStream fileIn = new FileInputStream(path);
             ObjectInputStream in = new ObjectInputStream(fileIn);
             return (Vector<Tuple>) in.readObject();
 
