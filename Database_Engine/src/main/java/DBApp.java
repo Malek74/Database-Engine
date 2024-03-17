@@ -88,6 +88,7 @@ public class DBApp {
 			throw new DBAppException("Table not found in MetaData!");
 		}
 
+
 		Path metaDataPath = Path.of("metadata.csv");
 		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
 
@@ -102,6 +103,9 @@ public class DBApp {
 		}
 		Files.write(metaDataPath, fileContent, StandardCharsets.UTF_8);
 
+		//get all indexes on insertion table
+		ArrayList<String> indexes=null;
+
 		// throw new DBAppException("not implemented yet");
 	}
 
@@ -114,8 +118,17 @@ public class DBApp {
 		if (!Helpers.tableExists(strTableName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
+
+		//check that value to enter is valid
+
 		// insert value in page
 		// TODO: Check types and validity?
+		if(Helpers.insertionValid(strTableName,htblColNameValue)==-2){
+			throw new DBAppException("Invalid Data:Inserted Data doesn't match MetaData");
+		} else if (Helpers.insertionValid(strTableName,htblColNameValue)==-1) {
+			throw new DBAppException("Invalid Data: Primary Key cannot be Null");
+		}
+
 		Table tableToInsert = tablesCreated.get(strTableName);
 		String clusteringKey = Helpers.getClusteringKey(strTableName);
 		Tuple t = new Tuple(htblColNameValue, clusteringKey);
@@ -187,11 +200,12 @@ public class DBApp {
 			dbApp.createIndex("Cars", "year", "yearIndex");
 
 
-			Hashtable htblColNameValue = new Hashtable( );
+			Hashtable<String, Object> htblColNameValue = new Hashtable<String, Object>( );
 
 			//for loop inserts 200 element
+			//TODO:mesh 3arf a5ali el pk beh null
 			for (int i = 0; i < 400; i++) {
-				htblColNameValue.put("id", i + 2);
+				htblColNameValue.put("id", i+1);
 				htblColNameValue.put("name", "Name_" + (i + 2));
 				htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
 				dbApp.insertIntoTable(strTableName, htblColNameValue);
