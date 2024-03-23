@@ -82,16 +82,22 @@ public class DBApp {
 	public void createIndex(String strTableName,
 			String strColName,
 			String strIndexName) throws DBAppException, IOException {
+		Path metaDataPath = Path.of("metadata.csv");
+		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
+		ArrayList<String> indexes=new ArrayList<String>();
+		Table table= null;
+		String path="";
+		Vector<Tuple> tupleVector= new Vector<Tuple>();
+		BplusTree createdTree;
 
 		// checks if table exists in metadata file
 		if (!Helpers.tableExists(strTableName, strColName)) {
 			throw new DBAppException("Table not found in MetaData!");
 		}
 
+		table=tablesCreated.get(strTableName);
 
-		Path metaDataPath = Path.of("metadata.csv");
-		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
-
+		// update metadata file
 		for (int i = 0; i < fileContent.size(); i++) {
 			if (fileContent.get(i).contains(strTableName) && (fileContent.get(i).contains(strColName))) {
 				String[] newLine = fileContent.get(i).split(",");
@@ -103,9 +109,21 @@ public class DBApp {
 		}
 		Files.write(metaDataPath, fileContent, StandardCharsets.UTF_8);
 
-		//get all indexes on insertion table
-		ArrayList<String> indexes=null;
+		//create B+Tree
+		createdTree=new BplusTree(3);
+		table.treesCreated.put(strIndexName,createdTree);
 
+
+		//get all indexes on insertion table
+		for(int i=1;i<table.getNumberOfPages()+1;i++){
+			path=strTableName+"_"+i+".ser";
+			tupleVector=Helpers.deserializeTuple(path);
+
+			for(Tuple tupleToInsert: tupleVector){
+				createdTree.insert((Comparable) tupleToInsert.getValue(strColName),path);
+			}
+			Helpers.serializeTuple(tupleVector,path);
+		}
 		// throw new DBAppException("not implemented yet");
 	}
 
@@ -121,14 +139,15 @@ public class DBApp {
 
 		//check that value to enter is valid
 
-		// insert value in page
 		// TODO: Check types and validity?
+		// todo:check what to insert
 		if(Helpers.insertionValid(strTableName,htblColNameValue)==-2){
 			throw new DBAppException("Invalid Data:Inserted Data doesn't match MetaData");
 		} else if (Helpers.insertionValid(strTableName,htblColNameValue)==-1) {
 			throw new DBAppException("Invalid Data: Primary Key cannot be Null");
 		}
 
+		// insert value in page
 		Table tableToInsert = tablesCreated.get(strTableName);
 		String clusteringKey = Helpers.getClusteringKey(strTableName);
 		Tuple t = new Tuple(htblColNameValue, clusteringKey);
@@ -136,14 +155,12 @@ public class DBApp {
 		tableToInsert.insert(p, t);
 
 		Hashtable<String, String> createdIndexes = Helpers.getIndexes(strTableName);
-
 		Comparable key;
 
-		// todo:check what to insert
-		// update B+trees if available
+		// update B+trees if available (by inserting path of page of new tuple
 		for (String index : createdIndexes.keySet()) {
 			key = (Comparable) htblColNameValue.get(index);
-			// tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,);
+			 tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,p.getPath());
 		}
 //		throw new DBAppException("not implemented yet");
 	}
@@ -196,8 +213,7 @@ public class DBApp {
 			dbApp.createTable("Cars", "make", htblColNameType);
 
 
-			dbApp.createIndex(strTableName, "gpa", "gpaIndex");
-			dbApp.createIndex("Cars", "year", "yearIndex");
+//			dbApp.createIndex("Cars", "year", "yearIndex");
 
 
 			Hashtable<String, Object> htblColNameValue = new Hashtable<String, Object>( );
@@ -207,23 +223,23 @@ public class DBApp {
 			for (int i = 0; i < 400; i++) {
 				htblColNameValue.put("id", i+1);
 				htblColNameValue.put("name", "Name_" + (i + 2));
-				htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
+				htblColNameValue.put("gpa",i*1.0); // Random GPA between 0 and 4
 				dbApp.insertIntoTable(strTableName, htblColNameValue);
 			}
 
-			htblColNameValue.put("id",1);
-			htblColNameValue.put("name", "Name_" + 1);
-			htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
-			dbApp.insertIntoTable(strTableName, htblColNameValue);
+//			htblColNameValue.put("id",1);
+//			htblColNameValue.put("name", "Name_" + 1);
+//			htblColNameValue.put("gpa", Math.random() * 4); // Random GPA between 0 and 4
+//			dbApp.insertIntoTable(strTableName, htblColNameValue);
 
-			System.out.println(tablesCreated.keys());
-			System.out.println(tablesCreated.get("Student").getNumberOfPages());
-			System.out.println(Helpers.deserializeTuple("Student_1.ser").size());
-			System.out.println(Helpers.deserializeTuple("Student_2.ser").size());
-			System.out.println(Helpers.deserializeTuple("Student_3.ser").size());
-
-//			for(Tuple t:Helpers.deserializeTuple("Student_1.ser")){
-//				System.out.println(t);
+			dbApp.createIndex(strTableName, "gpa", "gpaIndex");
+//
+//			Table t= tablesCreated.get("Student");
+//			System.out.println(	t.treesCreated.get("gpaIndex").search(199.0));
+//			System.out.println("-------------------");
+//
+//			for( Tuple xt:Helpers.deserializeTuple("Student_1.ser")){
+//				System.out.println(xt);
 //			}
 //			System.out.println("------------------------");
 //

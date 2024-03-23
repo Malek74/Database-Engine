@@ -591,7 +591,7 @@ public class BplusTree {
      * @param key:   an integer key to be used in the dictionary pair
      * @param value: a floating point number to be used in the dictionary pair
      */
-    public void insert(Comparable key, Tuple value) {
+    public void insert(Comparable key, String value) {
         if (isEmpty()) {
 
             /* Flow of execution goes here only when first insert takes place */
@@ -687,7 +687,7 @@ public class BplusTree {
      * @param key: the key to be searched within the B+ tree
      * @return the floating point value associated with the key within the B+ tree
      */
-    public Tuple search(Comparable key) {
+    public String search(Comparable key) {
 
         // If B+ tree is completely empty, simply return null
         if (isEmpty()) {
@@ -719,10 +719,10 @@ public class BplusTree {
      * @return an ArrayList<Double> that holds all values of dictionary pairs
      *         whose keys are within the specified range
      */
-    public ArrayList<Tuple> search(Comparable lowerBound, Comparable upperBound) {
+    public ArrayList<String> search(Comparable lowerBound, Comparable upperBound) {
 
         // Instantiate Double array to hold values
-        ArrayList<Tuple> values = new ArrayList<Tuple>();
+        ArrayList<String> values = new ArrayList<String>();
 
         // Iterate through the doubly linked list of leaves
         LeafNode currNode = this.firstLeaf;
@@ -1117,7 +1117,7 @@ public class BplusTree {
      */
     public class DictionaryPair implements Comparable<DictionaryPair> {
         Comparable key;
-        Tuple value;
+        String value;
 
 
 
@@ -1127,12 +1127,12 @@ public class BplusTree {
          * @param key:   the key of the key-value pair
          * @param value: the value of the key-value pair
          */
-        public DictionaryPair(Comparable key, Tuple value) {
+        public DictionaryPair(Comparable key, String value) {
             this.key = key;
             this.value = value;
         }
         public String toString(){
-            return "key: " + key + " Tuple: " + value.tableTupleHash.toString();
+            return "key: " + key + " Page Path: " + value;
         }
 
         /**
