@@ -82,6 +82,7 @@ public class DBApp {
 	public void createIndex(String strTableName,
 			String strColName,
 			String strIndexName) throws DBAppException, IOException {
+
 		Path metaDataPath = Path.of("metadata.csv");
 		List<String> fileContent = new ArrayList<>(Files.readAllLines(metaDataPath, StandardCharsets.UTF_8));
 		ArrayList<String> indexes=new ArrayList<String>();
@@ -95,7 +96,10 @@ public class DBApp {
 			throw new DBAppException("Table not found in MetaData!");
 		}
 
+		//todo:check if chosen column already has index
+
 		table=tablesCreated.get(strTableName);
+
 
 		// update metadata file
 		for (int i = 0; i < fileContent.size(); i++) {
@@ -111,7 +115,7 @@ public class DBApp {
 
 		//create B+Tree
 		createdTree=new BplusTree(3);
-		table.treesCreated.put(strIndexName,createdTree);
+		table.treesCreated.put(strColName,createdTree);
 
 
 		//get all indexes on insertion table
@@ -143,7 +147,8 @@ public class DBApp {
 		// todo:check what to insert
 		if(Helpers.insertionValid(strTableName,htblColNameValue)==-2){
 			throw new DBAppException("Invalid Data:Inserted Data doesn't match MetaData");
-		} else if (Helpers.insertionValid(strTableName,htblColNameValue)==-1) {
+		}
+		else if (Helpers.insertionValid(strTableName,htblColNameValue)==-1) {
 			throw new DBAppException("Invalid Data: Primary Key cannot be Null");
 		}
 
@@ -160,7 +165,7 @@ public class DBApp {
 		// update B+trees if available (by inserting path of page of new tuple
 		for (String index : createdIndexes.keySet()) {
 			key = (Comparable) htblColNameValue.get(index);
-			 tableToInsert.treesCreated.get(createdIndexes.get(index)).insert(key,p.getPath());
+			 tableToInsert.treesCreated.get(index).insert(key,p.getPath());
 		}
 //		throw new DBAppException("not implemented yet");
 	}
@@ -171,7 +176,10 @@ public class DBApp {
 	// strClusteringKeyValue is the value to look for to find the row to update.
 	public void updateTable(String strTableName,
 			String strClusteringKeyValue,
-			Hashtable<String, Object> htblColNameValue) throws DBAppException {
+			Hashtable<String, Object> htblColNameValue) throws DBAppException, IOException {
+
+
+
 
 		throw new DBAppException("not implemented yet");
 	}
@@ -180,8 +188,58 @@ public class DBApp {
 	// htblColNameValue holds the key and value. This will be used in search
 	// to identify which rows/tuples to delete.
 	// htblColNameValue enteries are ANDED together
+
+
 	public void deleteFromTable(String strTableName,
-			Hashtable<String, Object> htblColNameValue) throws DBAppException {
+			Hashtable<String, Object> htblColNameValue) throws DBAppException, IOException {
+			Hashtable<String,BplusTree> treesOnTable;
+			Table table;
+			String path="";
+			BplusTree tree;
+			Tuple tupleToDelete;
+			Vector<Tuple> tupleVector = new Vector<Tuple>();
+			Boolean foundTuple=false;
+
+		// check that table exists
+		if (!Helpers.tableExists(strTableName)) {
+			throw new DBAppException("Table not found in MetaData!");
+		}
+
+		table=tablesCreated.get(strTableName);
+		treesOnTable=table.treesCreated;
+
+		//for every column check if there is B+tree on it
+		for(String column : htblColNameValue.keySet()){
+			if(treesOnTable.containsKey(column)){
+				tree=treesOnTable.get(column);
+				path= tree.search((Comparable) htblColNameValue.get(column));
+				tupleVector= Helpers.deserializeTuple(path);
+				break;
+			}
+		}
+
+
+		if(!path.equals("")){
+			for(Tuple t:tupleVector){
+				for( String column: htblColNameValue.keySet()){
+					foundTuple=true;
+					if(((Comparable)t.getValue(column)).compareTo(htblColNameValue.get(column))!=0){
+						foundTuple=false;
+						break;
+					}
+				}
+				if(foundTuple){
+					tupleToDelete=t;
+					break;
+				}
+
+
+			}
+		}
+
+
+
+
 
 		throw new DBAppException("not implemented yet");
 
@@ -233,11 +291,11 @@ public class DBApp {
 //			dbApp.insertIntoTable(strTableName, htblColNameValue);
 
 			dbApp.createIndex(strTableName, "gpa", "gpaIndex");
-//
-//			Table t= tablesCreated.get("Student");
-//			System.out.println(	t.treesCreated.get("gpaIndex").search(199.0));
-//			System.out.println("-------------------");
-//
+
+			Table t= tablesCreated.get("Student");
+			System.out.println(	t.treesCreated.get("gpa").search(200.0));
+			System.out.println("-------------------");
+
 //			for( Tuple xt:Helpers.deserializeTuple("Student_1.ser")){
 //				System.out.println(xt);
 //			}
