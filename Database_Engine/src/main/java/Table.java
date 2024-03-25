@@ -14,6 +14,10 @@ public class Table {
         this.tableName = tableName;
     }
 
+    public Page getPage(int index) {
+        return pages.get(index);
+    }
+
     // todo:add exception to check class type
     public void addPage(Page page) {
         pages.add(page);
@@ -64,11 +68,11 @@ public class Table {
 
         if (tupleVector.size() > 200) {
             if (pages.size() > i + 1) {
-                insert(pages.get(i + 1),tupleVector.remove(tupleVector.size()-1));
+                insert(pages.get(i + 1), tupleVector.remove(tupleVector.size() - 1));
             } else {
                 Page newPage = new Page(pages.size() + 1, tableName);
                 this.addPage(newPage);
-                insert(newPage, tupleVector.remove(tupleVector.size()-1));
+                insert(newPage, tupleVector.remove(tupleVector.size() - 1));
             }
         }
         Helpers.serializeTuple(tupleVector, p.getPath());
